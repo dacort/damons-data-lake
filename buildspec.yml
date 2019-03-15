@@ -1,6 +1,6 @@
 version: 0.2
 
-artifacts:
-  files:
-    - web/**
-  discard-paths: yes
+phases:
+ post_build:
+   commands:
+     - aws s3 sync --delete web/ "s3://dcortesi-datalake/"
