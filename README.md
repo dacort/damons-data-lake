@@ -57,3 +57,9 @@ Do I want to make this data publicly available? Seems like it could be tough...
 - [web](web/) - Public-facing website artifacts
 - [src](src/) - AWS Glue Jobs and other scripts
 - [glue_deps](glue_deps/) - AWS Glue Python Shell dependencies
+
+## TODO/Notes
+
+### CodePipeline setup
+
+- Need an artifacts bucket and a deployment bucket. Artifacts bucket must be in same region.
