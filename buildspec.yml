@@ -3,4 +3,3 @@ version: 0.2
 artifacts:
   files:
     - web/**/*
-  discard-paths: yes
