@@ -2,5 +2,5 @@ version: 0.2
 
 artifacts:
   files:
-    - web/**
+    - web/**/*
   discard-paths: yes
