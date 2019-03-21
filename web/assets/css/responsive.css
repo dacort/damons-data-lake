@@ -397,12 +397,12 @@
 
   .mh-home .mh-header-info {
     padding: 0;
-    text-align: center;
+    /* text-align: center; */
     margin-top: 40px; }
 
   .mh-about .mh-about-inner {
     padding-left: 5px;
-    text-align: center;
+    /* text-align: center; */
     margin: 30px 15px; }
 
   .mh-skills .mh-professional-skill {
