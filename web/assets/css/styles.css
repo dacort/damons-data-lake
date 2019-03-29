@@ -1352,7 +1352,7 @@ body {
 
 .mh-portfolio-modal-inner {
   max-height: 500px;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
   margin-right: 20px; }
   .mh-portfolio-modal-inner::-webkit-scrollbar-track {
     border: 1px solid #000;
@@ -2682,4 +2682,8 @@ BLOG Pagination
 
 .emoji-input {
   font-size: 30px;
+}
+
+.portfolioContainer a {
+  opacity: 1;
 }

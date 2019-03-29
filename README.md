@@ -47,6 +47,13 @@ Would be fun to use in demos, also people could send me an "alert" or if enough 
   - Screen brightness (`ioreg -c AppleBacklightDisplay | grep brightness | cut -f2- -d= | sed 's/=/:/g' | jq -c '.brightness'`)
   - Failed logins (`log show --style syslog --predicate 'process == "loginwindow"' --debug --info --last 1d | grep "Verify password called with PAM auth set to YES, but pam handle == nil"`)
 
+### Life stats
+
+Using a simple [shell script](src/github-stats.py), I publish basic stats to a Kinesis Data Stream.
+A Kinesis Data Firehose is then setup to consume the data from that stream and write it out to S3 every so often.
+Once in S3, a Glue Crawler identifies the schema and keeps the partitions up-to-date. And then the data can be
+queried with Athena!
+
 ## Providing access to your customers
 
 Do I want to make this data publicly available? Seems like it could be tough...
