@@ -30,18 +30,22 @@ Would be fun to use in demos, also people could send me an "alert" or if enough 
 
 - Server
   - Kinesis [web analytics](https://github.com/awslabs/real-time-web-analytics-with-kinesis)
-  - S3 Access
+  - [x] S3 Access
   - ELB
-  - CloudFront
+  - [x] CloudFront
   - Should have an RDBMS somewhere...
 - Social
   - Twitter
-  - Github Commits & Traffic Stats
-  - Email volume?
+  - [x] Github Commits & Traffic Stats
+  - [x] Email volume? (`osascript -e 'tell application "Microsoft Outlook" to unread count of folder "Inbox" of default account'`)
   - Emoji feelings?
 - AWS
   - Athena queries per day
   - EMR clusters per day
+- Random
+  - Chrome tabs open (`osascript -e 'tell application "Google Chrome" to count every tab of every window'`)
+  - Screen brightness (`ioreg -c AppleBacklightDisplay | grep brightness | cut -f2- -d= | sed 's/=/:/g' | jq -c '.brightness'`)
+  - Failed logins (`log show --style syslog --predicate 'process == "loginwindow"' --debug --info --last 1d | grep "Verify password called with PAM auth set to YES, but pam handle == nil"`)
 
 ## Providing access to your customers
 
@@ -63,3 +67,4 @@ Do I want to make this data publicly available? Seems like it could be tough...
 ### CodePipeline setup
 
 - Need an artifacts bucket and a deployment bucket. Artifacts bucket must be in same region.
+- Need to set this up in CF so it deploys to a specific set of resources
