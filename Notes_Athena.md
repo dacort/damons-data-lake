@@ -28,3 +28,41 @@ FROM (
 ) t
 ORDER BY 1 DESC
 ```
+
+## Querying ~~real-time~~ CloudFront logs
+
+```sql
+-- Show most recent cloudfront logs
+SELECT * FROM "dcortesi"."dl_cloudfront_raw"
+ORDER BY concat(date, 'T', time) DESC
+limit 100;
+
+-- Find most common user agents
+SELECT count(*) as cnt, url_decode(url_decode(useragent)) FROM "dcortesi"."dl_cloudfront_raw"
+WHERE uri = '/'
+group by 2 order by 1 desc
+limit 100;
+
+-- Show requests from my own startup 🤗
+SELECT * FROM dl_cloudfront_raw where useragent = 'SMUrlExpander'
+```
+
+## Clipboard Stats
+
+```sql
+SELECT metadata.clipboard.source, COUNT(*) FROM dl_life
+WHERE event = 'clipboard_copy'
+GROUP BY 1
+ORDER BY 2 DESC;
+
+SELECT metadata.clipboard.destination, COUNT(*) FROM dl_life
+WHERE event = 'clipboard_copy'
+GROUP BY 1
+ORDER BY 2 DESC;
+
+SELECT CONCAT(metadata.clipboard.source, ' --> ', metadata.clipboard.destination), COUNT(*)
+FROM dl_life
+WHERE event = 'clipboard_copy'
+GROUP BY 1
+ORDER BY 2 DESC;
+```
