@@ -56,7 +56,6 @@ trackEvent() {
   CURRENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
   aws kinesis put-record --stream-name ${STREAM_NAME} --data '{"event":"clipboard_copy","type":"counter","value":"1", "ts":"'${CURRENT_TIME}'", "metadata":{"clipboard":{"source":"'"${FROM_APP}"'","destination":"'"${TO_APP}"'"}}}
 ' --partition-key 2 > /dev/null &
-  # echo '{"event":"clipboard_copy","type":"counter","value":"1","ts":"'${CURRENT_TIME}'", "metadata":{"clipboard":{"source":"'${FROM_APP}'","destination":"'${TO_APP}'"}}}'
 }
 
 # When Ctrl-C is pressed, print stats about clipboard usage
