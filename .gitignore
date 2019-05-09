@@ -1,2 +1,3 @@
 glue_deps/dist/
 glue_deps/glue_deps.egg-info/
+venv/
