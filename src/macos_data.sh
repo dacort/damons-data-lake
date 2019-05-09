@@ -1,3 +1,4 @@
+# Functions for gathering stats about different apps
 unread_count() {
     osascript -e 'tell application "Microsoft Outlook" to unread count of folder "Inbox" of default account'
 }
@@ -27,5 +28,5 @@ while true; do
     echo "iTerm tabs: ${ITERM_TABS}"
     aws kinesis put-record --stream-name ${STREAM_NAME} --data '{"event":"iterm_tabs","type":"gauge","value":"'${ITERM_TABS}'", "ts":"'${CURRENT_TIME}'"}
 ' --partition-key 1
-    sleep 60
+    sleep 10
 done
