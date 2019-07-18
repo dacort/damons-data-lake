@@ -8,10 +8,14 @@ This project uses managed services from AWS to ingest and store various sources 
 
 It uses several personal data sources including my own website, nerdy quantified self metrics, and Apple Health data.
 
-Using a simple [shell script](src/github-stats.py), I publish basic stats to a Kinesis Data Stream.
-A Kinesis Data Firehose is then setup to consume the data from that stream and write it out to S3 every so often.
-Once in S3, a Glue Crawler identifies the schema and keeps the partitions up-to-date. And then the data can be
-queried with Athena!
+Here are the different components used:
+- Basic stats are published to a Kinesis data stream.
+- A Kinesis Firehose is then setup to consume the data from that stream and write it out to S3 every so often.
+- A Glue Python Shell job is also used to gather Github Insights data.
+- Once in S3, a Glue Crawler identifies the schema and keeps the partitions up-to-date.
+- And then the data can be queried with Athena!
+
+You can see what this looks like in the [architecture diagram](#architecture-diagram).
 
 ## Getting started
 
@@ -92,6 +96,10 @@ AWS_PROFILE=profile-name STREAM_NAME=stream-name ./src/clipstats.sh
 OK, now that we've got data streaming in and it's being stored in S3, let's use [Amazon Athena](https://console.aws.amazon.com/athena/home) to query it!
 
 Take a look at a few example [Athena queries](Notes_Athena.md).
+
+## Architecture Diagram
+
+![Damons Data Lake](web/assets/images/damons-data-lake-arch.png)
 
 ## Resources
 
