@@ -11,6 +11,11 @@ iterm_tabs() {
     osascript -e 'tell application "iTerm" to count every tab of every window' 
 }
 
+cpu_temp() {
+    ~/Downloads/osx-cpu-temp-1.1.0/osx-cpu-temp -C | cut -f1 -d°
+}
+# ps -axrco pcpu,user,command | head -n 10
+
 # Gather various stats and report them to Kinesis stream
 while true; do
     CURRENT_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -24,6 +29,9 @@ while true; do
     ITERM_TABS=$(iterm_tabs)
     echo "iTerm tabs: ${ITERM_TABS}"
 
+    CPU_TEMP=$(cpu_temp)
+    echo "CPU Temp (°C): ${CPU_TEMP}"
+
     [ -n "${UNREAD_COUNT}" ] && aws kinesis put-record --stream-name ${STREAM_NAME} --data '{"event":"outlook_unread","type":"gauge","value":"'${UNREAD_COUNT}'", "ts":"'${CURRENT_TIME}'"}
 ' --partition-key 1
 
@@ -31,6 +39,9 @@ while true; do
 ' --partition-key 1
 
     aws kinesis put-record --stream-name ${STREAM_NAME} --data '{"event":"iterm_tabs","type":"gauge","value":"'${ITERM_TABS}'", "ts":"'${CURRENT_TIME}'"}
+' --partition-key 1
+
+    aws kinesis put-record --stream-name ${STREAM_NAME} --data '{"event":"cpu_temp","type":"gauge","value":"'${CPU_TEMP}'", "ts":"'${CURRENT_TIME}'", "metadata":{"cpu_temp":{"units":"celsius"}}}
 ' --partition-key 1
     sleep 10
 done
