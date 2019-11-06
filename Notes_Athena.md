@@ -7,7 +7,7 @@
 ```sql
 WITH minute_stats AS (
   SELECT
-    from_iso8601_timestamp(ts) AT TIME ZONE 'Europe/London' as ts,
+    date_trunc('second', from_iso8601_timestamp(ts)) AT TIME ZONE 'Europe/London' as ts,
     event,
     MAX(value) as value
   FROM "dcortesi"."dl_life"
