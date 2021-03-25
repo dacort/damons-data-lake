@@ -57,6 +57,28 @@ FROM dl_s3_access_optimus
 WHERE user_agent = 'Amazon CloudFront'
 LIMIT 10
 
+-- More S3 vs. CloudFront analysis
+WITH s3_stats AS (
+  SELECT DISTINCT substr(key, 7) as key,
+    count(*) as s3_count,
+    sum(CAST(bytes_sent as bigint)) AS s3_bytes
+  FROM dl_s3_access_optimus
+  WHERE user_agent = 'Amazon CloudFront' AND http_status = '200'
+  GROUP BY 1
+),
+
+cf_stats AS (
+  SELECT uri, count(*) cf_count, sum(bytes) cf_bytes FROM dl_cloudfront_optimus
+  WHERE uri IN (
+    SELECT DISTINCT substr(key, 7) AS key FROM dl_s3_access_optimus WHERE user_agent = 'Amazon CloudFront' AND http_status = '200'
+  )
+  GROUP BY 1
+)
+
+SELECT key, s3_count, s3_bytes, cf_count, cf_bytes, cf_bytes-s3_bytes AS diff FROM s3_stats
+LEFT JOIN cf_stats ON s3_stats.key=cf_stats.uri
+
+
 -- Hits today
 SELECT time,COUNT(*) AS hits FROM dl_cloudfront_raw
 WHERE date = CAST(current_date AS varchar)
