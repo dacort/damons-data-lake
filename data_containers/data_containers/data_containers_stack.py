@@ -1,3 +1,5 @@
+import json
+
 from aws_cdk import (
     aws_iam as iam,
     core as cdk,
@@ -182,6 +184,15 @@ class GlueStack(cdk.Stack):
                         path=s3_bucket.s3_url_for_object("forklift/youtube_channel"),
                     ),
                 ]
+            ),
+            configuration=json.dumps(
+                {
+                    "Version": 1.0,
+                    "Grouping": {"TableGroupingPolicy": "CombineCompatibleSchemas"},
+                    "CrawlerOutput": {
+                        "Partitions": {"AddOrUpdateBehavior": "InheritFromTable"}
+                    },
+                }
             ),
         )
 
