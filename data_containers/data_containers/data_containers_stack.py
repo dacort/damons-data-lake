@@ -63,7 +63,7 @@ class GitHubTraffic:
             self._stack,
             "GitHubTraffic",
             cluster=self._cluster,  # Required
-            schedule=autoscaling.Schedule.rate(cdk.Duration.hours(1)),
+            schedule=autoscaling.Schedule.rate(cdk.Duration.days(1)),
             scheduled_fargate_task_image_options=ecs_patterns.ScheduledFargateTaskImageOptions(
                 image=ecs.ContainerImage.from_registry("ghcr.io/dacort/crates-github"),
                 command=["traffic", ",".join(self._repos)],
@@ -94,6 +94,7 @@ class YouTubeVideo:
             "73PFjhMkNYw",  # Metastores w/EMR on EKS
             "NnePXN-0geQ",  # Airflow w/EMR on EKS
             "9nJ1n4rUzX8",  # Optimizing EMR on EKS jobs
+            "3cW6e64YRdY",  # EMR Studio Online Tech Talk
         ]
 
     def scheduled_task(self, s3_bucket: s3.Bucket) -> ecs_patterns.ScheduledFargateTask:
@@ -101,7 +102,7 @@ class YouTubeVideo:
             self._stack,
             "YouTubeVideo",
             cluster=self._cluster,
-            schedule=autoscaling.Schedule.rate(cdk.Duration.hours(1)),
+            schedule=autoscaling.Schedule.rate(cdk.Duration.days(1)),
             scheduled_fargate_task_image_options=ecs_patterns.ScheduledFargateTaskImageOptions(
                 image=ecs.ContainerImage.from_registry("ghcr.io/dacort/crates-youtube"),
                 command=["videos", ",".join(self._video_ids)],
