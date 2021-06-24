@@ -95,6 +95,7 @@ class YouTubeVideo:
             "NnePXN-0geQ",  # Airflow w/EMR on EKS
             "9nJ1n4rUzX8",  # Optimizing EMR on EKS jobs
             "3cW6e64YRdY",  # EMR Studio Online Tech Talk
+            "0x4DRKmNPfQ",  # EMR on EKS Custom Images
         ]
 
     def scheduled_task(self, s3_bucket: s3.Bucket) -> ecs_patterns.ScheduledFargateTask:
