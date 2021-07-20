@@ -54,6 +54,9 @@ class GitHubTraffic:
             "dacort/demo-code",
             "dacort/forklift",
             "dacort/metabase-athena-driver",
+            "dacort/spark-tweeter",
+            "dacort/jupyter-static-website",
+            "dacort/emr-eks-airflow2-plugin",
         ]
         self._stack = stack
         self._cluster = cluster
