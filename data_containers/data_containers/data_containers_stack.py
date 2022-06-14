@@ -57,6 +57,7 @@ class GitHubTraffic:
             "dacort/spark-tweeter",
             "dacort/jupyter-static-website",
             "dacort/emr-eks-airflow2-plugin",
+            "aws-samples/emr-serverless-samples",
         ]
         self._stack = stack
         self._cluster = cluster
