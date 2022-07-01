@@ -26,6 +26,9 @@ class DataContainersStack(cdk.Stack):
         github_task = GitHubTraffic(self, cluster).scheduled_task(data_bucket)
         data_bucket.grant_read_write(github_task.task_definition.task_role)
 
+        github_release_task = GitHubReleases(self, cluster).scheduled_task(data_bucket)
+        data_bucket.grant_read_write(github_release_task.task_definition.task_role)
+
         youtube_task = YouTubeVideo(self, cluster).scheduled_task(data_bucket)
         data_bucket.grant_read_write(youtube_task.task_definition.task_role)
 
@@ -84,6 +87,36 @@ class GitHubTraffic:
             ),
         )
 
+class GitHubReleases:
+    def __init__(self, stack: cdk.Stack, cluster: ecs.Cluster) -> None:
+        self._repos = [
+            "dacort/metabase-athena-driver",
+            "aws-samples/emr-serverless-samples",
+        ]
+        self._stack = stack
+        self._cluster = cluster
+
+    def scheduled_task(self, s3_bucket: s3.Bucket) -> ecs_patterns.ScheduledFargateTask:
+        return ecs_patterns.ScheduledFargateTask(
+            self._stack,
+            "GitHubReleases",
+            cluster=self._cluster,  # Required
+            schedule=autoscaling.Schedule.rate(cdk.Duration.days(1)),
+            scheduled_fargate_task_image_options=ecs_patterns.ScheduledFargateTaskImageOptions(
+                image=ecs.ContainerImage.from_registry("ghcr.io/dacort/crates-github"),
+                command=["releases", ",".join(self._repos)],
+                environment={
+                    "FORKLIFT_URI": f'{s3_bucket.s3_url_for_object()}/forklift/github/releases/{{{{json "repo"}}}}/{{{{today}}}}.json'
+                },
+                secrets={
+                    "GITHUB_PAT": ecs.Secret.from_secrets_manager(
+                        secrets.Secret.from_secret_name_v2(
+                            self._stack, "GitHubReleasePAT", "ddl/github_pat"
+                        )
+                    )
+                },
+            ),
+        )
 
 class YouTubeVideo:
     def __init__(self, stack: cdk.Stack, cluster: ecs.Cluster) -> None:
@@ -185,6 +218,9 @@ class GlueStack(cdk.Stack):
                     ),
                     glue.CfnCrawler.S3TargetProperty(
                         path=s3_bucket.s3_url_for_object("forklift/github/traffic"),
+                    ),
+                    glue.CfnCrawler.S3TargetProperty(
+                        path=s3_bucket.s3_url_for_object("forklift/github/releases"),
                     ),
                     glue.CfnCrawler.S3TargetProperty(
                         path=s3_bucket.s3_url_for_object("forklift/youtube_channel"),
