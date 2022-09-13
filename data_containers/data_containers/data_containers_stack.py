@@ -61,6 +61,7 @@ class GitHubTraffic:
             "dacort/jupyter-static-website",
             "dacort/emr-eks-airflow2-plugin",
             "aws-samples/emr-serverless-samples",
+            "awslabs/amazon-emr-vscode-toolkit",
         ]
         self._stack = stack
         self._cluster = cluster
