@@ -1,11 +1,14 @@
 import json
 
+from constructs import Construct
 from aws_cdk import (
+    Stack,
+    Duration,
     aws_iam as iam,
-    core as cdk,
     aws_ec2 as ec2,
     aws_ecs as ecs,
     aws_glue as glue,
+    aws_glue_alpha as aglue,
     aws_s3 as s3,
     aws_ecs_patterns as ecs_patterns,
     aws_applicationautoscaling as autoscaling,
@@ -13,8 +16,8 @@ from aws_cdk import (
 )
 
 
-class DataContainersStack(cdk.Stack):
-    def __init__(self, scope: cdk.Construct, construct_id: str, **kwargs) -> None:
+class DataContainersStack(Stack):
+    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         vpc = ec2.Vpc(self, "MyVpc", max_azs=3)  # default is all AZs in region
@@ -44,7 +47,7 @@ class DataContainersStack(cdk.Stack):
 
 
 class GitHubTraffic:
-    def __init__(self, stack: cdk.Stack, cluster: ecs.Cluster) -> None:
+    def __init__(self, stack: Stack, cluster: ecs.Cluster) -> None:
         self._repos = [
             "awslabs/amazon-athena-cross-account-catalog",
             "awslabs/athena-adobe-datafeed-splitter",
@@ -71,7 +74,7 @@ class GitHubTraffic:
             self._stack,
             "GitHubTraffic",
             cluster=self._cluster,  # Required
-            schedule=autoscaling.Schedule.rate(cdk.Duration.days(1)),
+            schedule=autoscaling.Schedule.rate(Duration.days(1)),
             scheduled_fargate_task_image_options=ecs_patterns.ScheduledFargateTaskImageOptions(
                 image=ecs.ContainerImage.from_registry("ghcr.io/dacort/crates-github"),
                 command=["traffic", ",".join(self._repos)],
@@ -89,7 +92,7 @@ class GitHubTraffic:
         )
 
 class GitHubReleases:
-    def __init__(self, stack: cdk.Stack, cluster: ecs.Cluster) -> None:
+    def __init__(self, stack: Stack, cluster: ecs.Cluster) -> None:
         self._repos = [
             "dacort/metabase-athena-driver",
             "aws-samples/emr-serverless-samples",
@@ -102,7 +105,7 @@ class GitHubReleases:
             self._stack,
             "GitHubReleases",
             cluster=self._cluster,  # Required
-            schedule=autoscaling.Schedule.rate(cdk.Duration.days(1)),
+            schedule=autoscaling.Schedule.rate(Duration.days(1)),
             scheduled_fargate_task_image_options=ecs_patterns.ScheduledFargateTaskImageOptions(
                 image=ecs.ContainerImage.from_registry("ghcr.io/dacort/crates-github"),
                 command=["releases", ",".join(self._repos)],
@@ -120,7 +123,7 @@ class GitHubReleases:
         )
 
 class YouTubeVideo:
-    def __init__(self, stack: cdk.Stack, cluster: ecs.Cluster) -> None:
+    def __init__(self, stack: Stack, cluster: ecs.Cluster) -> None:
         self._stack = stack
         self._cluster = cluster
         self._video_ids = [
@@ -141,7 +144,7 @@ class YouTubeVideo:
             self._stack,
             "YouTubeVideo",
             cluster=self._cluster,
-            schedule=autoscaling.Schedule.rate(cdk.Duration.days(1)),
+            schedule=autoscaling.Schedule.rate(Duration.days(1)),
             scheduled_fargate_task_image_options=ecs_patterns.ScheduledFargateTaskImageOptions(
                 image=ecs.ContainerImage.from_registry("ghcr.io/dacort/crates-youtube"),
                 command=["videos", ",".join(self._video_ids)],
@@ -160,7 +163,7 @@ class YouTubeVideo:
 
 
 class YouTubeChannel:
-    def __init__(self, stack: cdk.Stack, cluster: ecs.Cluster) -> None:
+    def __init__(self, stack: Stack, cluster: ecs.Cluster) -> None:
         self._stack = stack
         self._cluster = cluster
         self._channel_id = "UCKtlXVZC2DqzayRlZYLObZw"
@@ -170,7 +173,7 @@ class YouTubeChannel:
             self._stack,
             "YouTubeChannel",
             cluster=self._cluster,
-            schedule=autoscaling.Schedule.rate(cdk.Duration.hours(1)),
+            schedule=autoscaling.Schedule.rate(Duration.hours(1)),
             scheduled_fargate_task_image_options=ecs_patterns.ScheduledFargateTaskImageOptions(
                 image=ecs.ContainerImage.from_registry("ghcr.io/dacort/crates-youtube"),
                 command=["channel_videos", self._channel_id],
@@ -188,11 +191,11 @@ class YouTubeChannel:
         )
 
 
-class GlueStack(cdk.Stack):
-    def __init__(self, scope: cdk.Construct, construct_id: str, **kwargs) -> None:
+class GlueStack(Stack):
+    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        db = glue.Database(self, "DamonsDataLake", database_name="damons_datalake")
+        db = aglue.Database(self, "DamonsDataLake", database_name="damons_datalake")
 
         s3_bucket = get_or_create_bucket(self, "glue-data-bucket", "bucket_name")
         glue_crawler = iam.Role(
@@ -241,7 +244,7 @@ class GlueStack(cdk.Stack):
 
 
 def get_or_create_bucket(
-    stack: cdk.Stack, bucket_id: str, context_key: str = None
+    stack: Stack, bucket_id: str, context_key: str = None
 ) -> s3.Bucket:
     if context_key is None or stack.node.try_get_context(context_key) is None:
         return s3.Bucket(

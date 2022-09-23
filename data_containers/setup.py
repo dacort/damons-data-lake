@@ -19,14 +19,9 @@ setuptools.setup(
     packages=setuptools.find_packages(where="data_containers"),
 
     install_requires=[
-        "aws-cdk.core==1.95.0",
-        "aws-cdk.aws-iam",
-        "aws-cdk.aws-ec2",
-        "aws-cdk.aws-ecs",
-        "aws-cdk.aws-ecs-patterns",
-        "aws-cdk.aws-applicationautoscaling",
-        "aws-cdk.aws-s3"
-        "aws-cdk.aws-secretsmanager",
+        "aws-cdk-lib>=2.0.0",
+        "constructs>=10.0.0",
+        "aws-cdk.aws-glue-alpha==2.43.1a0",
     ],
 
     python_requires=">=3.6",
